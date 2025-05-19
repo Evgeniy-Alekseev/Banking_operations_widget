@@ -15,4 +15,14 @@ if __name__ == "__main__":
        ]
     print(filter_by_state(transactions))
 
-def sort_by_date():
+from datetime import datetime
+
+def sort_by_date(transactions: list[dict], reverse: bool = True) -> list[dict]:
+    """
+    Сортирует список словарей по дате (ключ 'date') (по умолчанию reverse = True).
+    Возвращает отсортированный список словарей (в начале новые записи).
+    """
+    return sorted(transactions, key=lambda x: datetime.fromisoformat(x['date']), reverse=reverse)
+
+if __name__ == "__main__":
+    print(sort_by_date(transactions))
