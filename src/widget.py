@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from .masks import get_mask_account, get_mask_card_number
 
@@ -44,9 +45,23 @@ if __name__ == "__main__":
 
 def get_date(date_info: str) -> str:
     """Преобразует строку с датой в строку формата 'ДД.ММ.ГГГГ'."""
-    date_part = date_info.split("T")[0]  # Получаем "2024-03-11"
-    year, month, day = date_part.split("-")
-    return f"{day}.{month}.{year}"
+    if not date_info:
+        raise ValueError("Пустая строка не допускается.")
+
+    # Пытаемся распарсить дату в разных форматах
+    try:
+        # Пробуем ISO-формат (2024-03-11 или 2024-03-11T12:30:45)
+        dt = datetime.fromisoformat(date_info.replace(" ", "T"))
+        return dt.strftime("%d.%m.%Y")
+    except ValueError:
+        try:
+            # Пробуем другой возможный формат (например, 2024-03-11 12:30:45)
+            dt = datetime.strptime(date_info, "%Y-%m-%d %H:%M:%S")
+            return dt.strftime("%d.%m.%Y")
+        except ValueError:
+            raise ValueError(
+                "Некорректный формат даты. Ожидается 'ГГГГ-ММ-ДД', 'ГГГГ-ММ-ДДTЧЧ:ММ:СС' или 'ГГГГ-ММ-ДД ЧЧ:ММ:СС'"
+            )
 
 
 if __name__ == "__main__":
