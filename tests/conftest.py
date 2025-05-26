@@ -119,3 +119,49 @@ def invalid_dates():
         "invalid date string",
         "2024-03"
     ]
+
+
+# фикстуры для filter_by_state
+
+@pytest.fixture
+def sample_transactions():
+    return [
+        {"id": 1, "state": "EXECUTED", "amount": "100"},
+        {"id": 2, "state": "PENDING", "amount": "200"},
+        {"id": 3, "state": "EXECUTED", "amount": "300"},
+        {"id": 4, "state": "CANCELED", "amount": "400"},
+        {"id": 5, "state": "EXECUTED", "amount": "500"},
+    ]
+
+@pytest.fixture
+def empty_transactions():
+    return []
+
+@pytest.fixture
+def no_executed_transactions():
+    return [
+        {"id": 1, "state": "PENDING", "amount": "100"},
+        {"id": 2, "state": "CANCELED", "amount": "200"},
+    ]
+
+
+# фикстуры для sort_by_date
+
+@pytest.fixture
+def sample_transactions():
+    """Фикстура с тестовыми транзакциями разных дат"""
+    return [
+        {"id": 1, "date": "2023-08-15T12:00:00", "amount": "100"},
+        {"id": 2, "date": "2023-08-20T15:30:00", "amount": "200"},
+        {"id": 3, "date": "2023-08-10T09:15:00", "amount": "300"},
+        {"id": 4, "date": "2023-08-20T10:00:00", "amount": "400"},  # Та же дата, что у id=2
+    ]
+
+@pytest.fixture
+def transactions_with_same_dates():
+    """Фикстура с транзакциями с одинаковыми датами"""
+    return [
+        {"id": 1, "date": "2023-08-15T12:00:00", "amount": "100"},
+        {"id": 2, "date": "2023-08-15T12:00:00", "amount": "200"},
+        {"id": 3, "date": "2023-08-15T12:00:00", "amount": "300"},
+    ]
