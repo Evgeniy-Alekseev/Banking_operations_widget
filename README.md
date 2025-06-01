@@ -1,4 +1,5 @@
 # Banking operations widget
+feature/homework_10_2
 
 ## Описание проекта
 
