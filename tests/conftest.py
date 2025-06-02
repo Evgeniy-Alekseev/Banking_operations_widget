@@ -1,5 +1,8 @@
 import pytest
 
+
+from src.generators import card_number_generator
+
 # фикстуры для get_mask_card_number
 
 
@@ -15,7 +18,13 @@ def different_input_card_number():
 
 @pytest.fixture
 def invalid_length_card_number():
-    return "Номер карты должен содержать 16 цифр"
+    return [
+        ("1234567890", "Номер карты должен содержать 16 цифр"),
+        ("12345678901234567890", "Номер карты должен содержать 16 цифр"),
+        ("", "Номер карты не может быть пустым"),
+        ("     ", "Номер карты не может быть пустым"),
+        ("1234abcd5678efgh", "Номер карты должен содержать только цифры"),
+    ]
 
 
 @pytest.fixture
@@ -43,12 +52,19 @@ def min_length_account():
 
 @pytest.fixture
 def invalid_length_account():
-    return "Номер счёта должен содержать минимум 4 цифры"
+    return [
+        ("123", "Номер счёта должен содержать минимум 4 цифры"),
+        ("", "Номер счёта не может быть пустым"),
+        ("   ", "Номер счёта не может быть пустым"),
+    ]
 
 
 @pytest.fixture
 def non_digit_account():
-    return "Номер счёта должен содержать минимум 4 цифры"
+    return [
+        ("1234abcd5678efgh", "Номер счёта должен содержать только цифры"),
+        ("123", "Номер счёта должен содержать минимум 4 цифры"),
+    ]
 
 
 # фикстуры для mask_account_card
@@ -75,7 +91,7 @@ def card_test_data(request):
 
 
 # Фикстуры для теста маскировки счетов
-@pytest.fixture(params=[("Счет 12345678901234567890", "Счет **7890"), ("Счет 98765432109876543210", "Счет **3210")])
+@pytest.fixture(params=[("Счёт 12345678901234567890", "Счёт **7890"), ("Счёт 98765432109876543210", "Счёт **3210")])
 def account_test_data(request):
     return request.param
 
@@ -83,9 +99,8 @@ def account_test_data(request):
 # Фикстуры для теста некорректных данных
 @pytest.fixture(
     params=[
-        ("Visa Platinum 1234", "Номер карты должен содержать только цифры"),
-        ("MasterCard abcdefghijklmnop", "Номер карты должен содержать только цифры"),
-        ("Visa Platinum", "Номер карты должен содержать только цифры"),
+        ("Visa Platinum 1234", "Номер карты должен содержать 16 цифр"),
+        ("Visa Platinum abcdefghijklmnop", "Номер карты должен содержать только цифры"),
     ]
 )
 def invalid_card_data(request):
@@ -94,8 +109,8 @@ def invalid_card_data(request):
 
 @pytest.fixture(
     params=[
-        ("Счет 123", "Номер счета должен содержать минимум 4 цифры"),
-        ("Счет abc", "Номер счета должен содержать только цифры"),
+        ("Счет 123", "Номер счёта должен содержать минимум 4 цифры"),
+        ("Счет abc", "Номер счёта должен содержать только цифры"),
     ]
 )
 def invalid_account_data(request):
@@ -142,11 +157,13 @@ def sample_transactions():
 
 @pytest.fixture
 def empty_transactions():
+    """Фикстура с пустым списком транзакций"""
     return []
 
 
 @pytest.fixture
 def no_executed_transactions():
+    """Фикстура без EXECUTED транзакций"""
     return [
         {"id": 1, "state": "PENDING", "amount": "100"},
         {"id": 2, "state": "CANCELED", "amount": "200"},
@@ -157,21 +174,134 @@ def no_executed_transactions():
 
 
 @pytest.fixture
-def sample_transactions():
-    """Фикстура с тестовыми транзакциями разных дат"""
+def transactions_with_different_dates():
+    """Фикстура с транзакциями разных дат и статусов"""
     return [
-        {"id": 1, "date": "2023-08-15T12:00:00", "amount": "100"},
-        {"id": 2, "date": "2023-08-20T15:30:00", "amount": "200"},
-        {"id": 3, "date": "2023-08-10T09:15:00", "amount": "300"},
-        {"id": 4, "date": "2023-08-20T10:00:00", "amount": "400"},  # Та же дата, что у id=2
+        {"id": 1, "date": "2023-08-15T12:00:00", "state": "EXECUTED"},
+        {"id": 2, "date": "2023-08-20T15:30:00", "state": "PENDING"},
+        {"id": 3, "date": "2023-08-10T09:15:00", "state": "EXECUTED"},
+        {"id": 4, "date": "2023-08-20T10:00:00", "state": "CANCELED"},
+        {"id": 5, "date": "2023-08-25T18:45:00", "state": "EXECUTED"},
     ]
 
 
 @pytest.fixture
 def transactions_with_same_dates():
-    """Фикстура с транзакциями с одинаковыми датами"""
+    """Фикстура с транзакциями одинаковых дат, но разных статусов"""
     return [
-        {"id": 1, "date": "2023-08-15T12:00:00", "amount": "100"},
-        {"id": 2, "date": "2023-08-15T12:00:00", "amount": "200"},
-        {"id": 3, "date": "2023-08-15T12:00:00", "amount": "300"},
+        {"id": 1, "date": "2023-08-15T12:00:00", "state": "EXECUTED"},
+        {"id": 2, "date": "2023-08-15T12:00:00", "state": "PENDING"},
+        {"id": 3, "date": "2023-08-15T12:00:00", "state": "CANCELED"},
     ]
+
+
+@pytest.fixture
+def mixed_transactions():
+    """Фикстура со смешанными данными: валидные и невалидные даты, разные статусы"""
+    return [
+        {"id": 1, "date": "2023-08-15T12:00:00", "state": "EXECUTED"},
+        {"id": 2, "date": "invalid-date", "state": "PENDING"},
+        {"id": 3, "date": "2023-08-10T09:15:00", "state": "EXECUTED"},
+        {"id": 4, "date": None, "state": "CANCELED"},
+        {"id": 5, "state": "EXECUTED"},  # Нет ключа date
+    ]
+
+
+@pytest.fixture
+def edge_case_transactions():
+    """Фикстура с граничными случаями"""
+    return [
+        {"id": 1, "date": "0001-01-01T00:00:00", "state": "EXECUTED"},  # Минимальная дата
+        {"id": 2, "date": "9999-12-31T23:59:59", "state": "PENDING"},  # Максимальная дата
+        {"id": 3, "date": "2020-02-29T12:00:00", "state": "EXECUTED"},  # Високосный год
+    ]
+
+
+@pytest.fixture
+def large_transactions_set():
+    """Генерация большого набора данных для тестирования производительности"""
+    return [{"id": i, "date": f"2023-08-{i % 30+1}T12:00:00", "state": "EXECUTED"} for i in range(1000)]
+
+
+# фикстуры для filter_by_currency
+
+
+@pytest.fixture
+def transactions_fixture():
+    """Фикстура с тестовыми данными транзакций"""
+    return [
+        {"id": 939719570, "state": "EXECUTED", "operationAmount": {"currency": {"code": "USD"}}},
+        {"id": 142264268, "state": "EXECUTED", "operationAmount": {"currency": {"code": "USD"}}},
+        {"id": 873106923, "state": "EXECUTED", "operationAmount": {"currency": {"code": "RUB"}}},
+        {"id": 895315941, "state": "EXECUTED", "operationAmount": {"currency": {"code": "USD"}}},
+        {"id": 594226727, "state": "CANCELED", "operationAmount": {"currency": {"code": "RUB"}}},
+    ]
+
+
+# фикстуры для transaction_descriptions
+
+
+@pytest.fixture
+def transactions_descriptions_fixture():
+    """Фикстура с полными тестовыми данными транзакций"""
+    return [
+        {
+            "id": 939719570,
+            "description": "Перевод организации",
+            "operationAmount": {"currency": {"code": "USD"}},
+            "state": "EXECUTED",
+        },
+        {
+            "id": 142264268,
+            "description": "Перевод со счета на счет",
+            "operationAmount": {"currency": {"code": "USD"}},
+            "state": "EXECUTED",
+        },
+        {
+            "id": 873106923,
+            "description": "Перевод со счета на счет",
+            "operationAmount": {"currency": {"code": "RUB"}},
+            "state": "EXECUTED",
+        },
+        {
+            "id": 895315941,
+            "description": "Перевод с карты на карту",
+            "operationAmount": {"currency": {"code": "USD"}},
+            "state": "EXECUTED",
+        },
+        {
+            "id": 594226727,
+            "description": "Перевод организации",
+            "operationAmount": {"currency": {"code": "RUB"}},
+            "state": "CANCELED",
+        },
+    ]
+
+
+@pytest.fixture
+def empty_transactions_fixture():
+    """Фикстура с пустым списком транзакций"""
+    return []
+
+
+@pytest.fixture
+def no_description_transactions_fixture():
+    """Фикстура с транзакциями без описания"""
+    return [
+        {"id": 1, "operationAmount": {"currency": {"code": "USD"}}},
+        {"id": 2, "description": None, "operationAmount": {"currency": {"code": "RUB"}}},
+        {"id": 3, "operationAmount": {"currency": {"code": "EUR"}}},
+    ]
+
+
+# фикстуры для card_number_generator
+
+
+@pytest.fixture
+def card_number_generator_fixture():
+    """Фикстура для генератора номеров карт"""
+
+    def _generator(start, stop):
+        return card_number_generator(start, stop)
+
+    return _generator

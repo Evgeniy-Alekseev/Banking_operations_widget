@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 
 from src.widget import get_date, mask_account_card
@@ -43,7 +41,7 @@ def test_unknown_format():
     assert mask_account_card("Неизвестный формат 1234567890") == "Неизвестный формат 1234567890"
 
 
-# Использование параметризации
+# Использование параметризации для mask_account_card
 
 
 @pytest.mark.parametrize(
@@ -89,18 +87,33 @@ def test_mask_account_invalid_strings(invalid_input):
 
 
 @pytest.mark.parametrize(
-    "input_data, expected",
+    "input_data",
     [
-        ("  Счет  12345678901234567890  ", "Счет **7890"),
-        ("  Visa Platinum  1234567890123456  ", "Visa Platinum 1234 56** **** 3456"),
+        None,
+        12345,
+        ["Счет 12345678901234567890"],
+        {"account": "Счет 12345678901234567890"},
     ],
 )
-def test_mask_account_with_whitespace(input_data, expected):
-    """Тестирование обработки строк с лишними пробелами."""
-    assert mask_account_card(input_data) == expected
+def test_mask_account_card_with_invalid_input(input_data):
+    """Тест на обработку некорректных входных данных."""
+    with pytest.raises((AttributeError, TypeError)):
+        mask_account_card(input_data)
+
+
+def test_mask_account_card_with_whitespace():
+    """Тест на обработку строки с пробелами."""
+    assert mask_account_card("  Счет  12345678901234567890  ") == "Счет **7890"
+    assert mask_account_card("  Visa Platinum  1234567890123456  ") == "Visa Platinum 1234 56** **** 3456"
 
 
 # тесты для get_date
+
+
+def test_correct_date_conversion(valid_dates):
+    """Тестирование правильности преобразования даты"""
+    for date_str, expected in valid_dates[:3]:  # Первые 3 теста из оригинального test_correct_date_conversion
+        assert get_date(date_str) == expected
 
 
 def test_different_date_formats(valid_dates):
@@ -134,9 +147,10 @@ def test_invalid_input(invalid_dates):
             get_date(date_str)
 
 
-# Использование параметризации
+# Использование параметризации для get_date
 
 
+# Тестирование правильности преобразования даты
 @pytest.mark.parametrize(
     "date_str, expected",
     [
