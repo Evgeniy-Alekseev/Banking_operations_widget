@@ -4,7 +4,7 @@ from .masks import get_mask_account, get_mask_card_number
 
 
 def mask_account_card(account_info: str) -> str:
-    """Маскирует номер карты или счета в переданной строке."""
+    """Маскирует номер карты или счёта в переданной строке."""
     if not account_info.strip():
         return account_info
 
@@ -12,28 +12,31 @@ def mask_account_card(account_info: str) -> str:
     if not parts:
         return account_info
 
-    # Обработка счета
-    if parts[0] == "Счет":
+    # Обработка счёта (учитываем оба варианта написания - "Счёт" и "Счет")
+    if parts[0].lower() in ["счёт", "счет"]:
         if len(parts) < 2:
             return account_info
-        try:
-            account_number = parts[-1]
-            masked_number = get_mask_account(account_number)
-            return f"Счет {masked_number}"
-        except ValueError:
-            return account_info
+        account_number = parts[-1]
+        if not account_number.isdigit():
+            raise ValueError("Номер счёта должен содержать только цифры")
+        masked_number = get_mask_account(account_number)
+        return f"{parts[0]} {masked_number}"
 
-    # Обработка карты (проверяем, есть ли номер карты в конце)
-    elif len(parts) > 1 and parts[-1].isdigit():
-        try:
-            card_name = " ".join(parts[:-1])
-            card_number = parts[-1]
-            masked_number = get_mask_card_number(card_number)
-            return f"{card_name} {masked_number}"
-        except ValueError:
-            return account_info
+    # Обработка карты (только если название похоже на тип карты)
+    elif len(parts) > 1 and parts[0].lower() in ["visa", "mastercard", "мир", "maestro"]:
+        card_name = " ".join(parts[:-1])
+        card_number = parts[-1]
 
-    # Неизвестный формат
+        # Проверка номера карты
+        if not card_number.isdigit():
+            raise ValueError("Номер карты должен содержать только цифры")
+        if len(card_number) != 16:
+            raise ValueError("Номер карты должен содержать 16 цифр")
+
+        masked_number = get_mask_card_number(card_number)
+        return f"{card_name} {masked_number}"
+
+    # Неизвестный формат - возвращаем как есть
     return account_info
 
 
