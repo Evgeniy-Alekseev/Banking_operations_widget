@@ -1,5 +1,5 @@
-from functools import wraps
 from datetime import datetime
+from functools import wraps
 
 
 def log(filename=None):
@@ -11,10 +11,7 @@ def log(filename=None):
             try:
                 result = func(*args, **kwargs)
                 # Добавляем логирование аргументов и результата
-                log_message = (
-                    f"{timestamp} - {func_name} ok - "
-                    f"args: {args}, kwargs: {kwargs}, result: {result}\n"
-                )
+                log_message = f"{timestamp} - {func_name} ok - " f"args: {args}, kwargs: {kwargs}, result: {result}\n"
                 if filename:
                     with open(filename, "a") as f:
                         f.write(log_message)
@@ -32,5 +29,7 @@ def log(filename=None):
                 else:
                     print(error_message, end="")
                 raise
+
         return wrapper
+
     return decorator

@@ -1,4 +1,5 @@
 import pytest
+
 from src.decorators import log
 
 
@@ -11,7 +12,7 @@ def test_log_to_file_success(log_file):
     result = add(2, 3)
     assert result == 5
 
-    with open(log_file, 'r') as f:
+    with open(log_file, "r") as f:
         content = f.read()
         assert "add ok" in content
 
@@ -25,7 +26,7 @@ def test_log_to_file_error(log_file):
     with pytest.raises(ZeroDivisionError):
         divide(1, 0)
 
-    with open(log_file, 'r') as f:
+    with open(log_file, "r") as f:
         content = f.read()
         # Проверяем ключевые части сообщения
         assert "divide error: ZeroDivisionError" in content
@@ -85,7 +86,7 @@ def test_log_with_kwargs(log_file):
     assert result == "Hello, Evgeniy"
 
     # Проверяем лог успешного вызова
-    with open(log_file, 'r') as f:
+    with open(log_file, "r") as f:
         log_content = f.read()
         assert "greet ok" in log_content
         assert "kwargs: {'title': None}" in log_content  # Проверяем None в kwargs
@@ -95,7 +96,7 @@ def test_log_with_kwargs(log_file):
     result = greet("Evgeniy", title=None)
     assert result == "Hello, Evgeniy"
 
-    with open(log_file, 'r') as f:
+    with open(log_file, "r") as f:
         log_content = f.read()
         assert "kwargs: {'title': None}" in log_content
 
@@ -103,7 +104,7 @@ def test_log_with_kwargs(log_file):
     with pytest.raises(TypeError):
         greet("Evgeniy", title=123)
 
-    with open(log_file, 'r') as f:
+    with open(log_file, "r") as f:
         log_content = f.read()
         assert "greet error" in log_content
         assert "TypeError" in log_content
