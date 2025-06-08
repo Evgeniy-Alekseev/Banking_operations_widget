@@ -10,16 +10,22 @@ def log(filename=None):
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             try:
                 result = func(*args, **kwargs)
-                log_message = f"{timestamp} - {func_name} ok\n"
+                # Добавляем логирование аргументов и результата
+                log_message = (
+                    f"{timestamp} - {func_name} ok - "
+                    f"args: {args}, kwargs: {kwargs}, result: {result}\n"
+                )
                 if filename:
                     with open(filename, "a") as f:
                         f.write(log_message)
                 else:
                     print(log_message, end="")
-
                 return result
             except Exception as e:
-                error_message = f"{timestamp} - {func_name} error: {type(e).__name__}. Inputs: {args}, {kwargs}\n"
+                error_message = (
+                    f"{timestamp} - {func_name} error: {type(e).__name__} - "
+                    f"args: {args}, kwargs: {kwargs}, error: {str(e)}\n"
+                )
                 if filename:
                     with open(filename, "a") as f:
                         f.write(error_message)
@@ -28,5 +34,3 @@ def log(filename=None):
                 raise
         return wrapper
     return decorator
-
-

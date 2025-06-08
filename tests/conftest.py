@@ -1,3 +1,4 @@
+import os
 import pytest
 
 
@@ -305,3 +306,12 @@ def card_number_generator_fixture():
         return card_number_generator(start, stop)
 
     return _generator
+
+
+# Фикстура для декоратора log
+@pytest.fixture
+def log_file(tmp_path):
+    filename = tmp_path / "test_log.txt"
+    yield filename
+    if os.path.exists(filename):
+        os.remove(filename)
