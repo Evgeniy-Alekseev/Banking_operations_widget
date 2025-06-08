@@ -17,6 +17,7 @@ packages = [{include = "banking_operations_widget", from = "src"}]
 [tool.poetry.group.dev.dependencies]
 requests = "^2.32.3"
 pytest = "^8.3.5"
+pytest-cov = "^6.1.1"
 
 
 [tool.poetry.group.lint.dependencies]

@@ -24,6 +24,16 @@ def sort_by_date(transactions: list[dict], reverse: bool = True) -> list[dict]:
     Сортирует список словарей по дате (ключ 'date') (по умолчанию reverse = True).
     Возвращает отсортированный список словарей (в начале новые записи).
     """
+    for transaction in transactions:
+        if "date" not in transaction:
+            raise KeyError("Transaction is missing 'date' key")
+        if transaction["date"] is None:
+            raise ValueError("Transaction date is None")
+        try:
+            datetime.fromisoformat(transaction["date"])
+        except ValueError as e:
+            raise ValueError(f"Invalid date format: {transaction['date']}") from e
+
     return sorted(transactions, key=lambda x: datetime.fromisoformat(x["date"]), reverse=reverse)
 
 
