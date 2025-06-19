@@ -2,8 +2,7 @@ import json
 from typing import List, Dict
 from pathlib import Path
 
-
-def load_transactions(file_path: str) -> List[Dict]:
+def load_transactions(file_path: str = 'operations.json') -> List[Dict]:
     """
     Загружает список транзакций из JSON-файла и возвращает список словарей
     с транзакциями или пустой список в случае ошибок
@@ -18,3 +17,10 @@ def load_transactions(file_path: str) -> List[Dict]:
             if isinstance(data, list):
                 return data
             return []
+
+    except (json.JSONDecodeError, FileNotFoundError, PermissionError) as e:
+        # Обрабатываем ошибки:
+        # - Невалидный JSON
+        # - Файл не найден
+        # - Нет прав на чтение
+        return []
