@@ -1,6 +1,8 @@
-import pytest
 import json
 from unittest.mock import mock_open, patch
+
+import pytest
+
 from src.utils import load_transactions
 
 
@@ -12,12 +14,15 @@ def test_load_valid_file(tmp_path, sample_data):
     assert result == sample_data
 
 
-@pytest.mark.parametrize("content,expected", [
-    ("", []),  # Пустой файл
-    ("{}", []),  # Не список
-    ("invalid json", []),  # Невалидный JSON
-    ("42", []),  # Число вместо списка
-])
+@pytest.mark.parametrize(
+    "content,expected",
+    [
+        ("", []),  # Пустой файл
+        ("{}", []),  # Не список
+        ("invalid json", []),  # Невалидный JSON
+        ("42", []),  # Число вместо списка
+    ],
+)
 def test_load_invalid_files(tmp_path, content, expected):
     file = tmp_path / "invalid.json"
     file.write_text(content)
