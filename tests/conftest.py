@@ -315,3 +315,22 @@ def log_file(tmp_path):
     yield filename
     if os.path.exists(filename):
         os.remove(filename)
+
+
+# фикстуры для load_transactions
+
+
+@pytest.fixture
+def sample_data():
+    return [{"id": 1, "amount": "100", "currency": "RUB"}, {"id": 2, "amount": "200", "currency": "USD"}]
+
+
+# фикстуры для get_amount_in_rub
+
+
+@pytest.fixture
+def mock_response():
+    mock = MagicMock()
+    mock.json.return_value = {"rates": {"RUB": 75.50}}
+    mock.raise_for_status.return_value = None
+    return mock
