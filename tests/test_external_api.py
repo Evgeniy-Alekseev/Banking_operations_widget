@@ -1,8 +1,6 @@
-from unittest.mock import MagicMock, patch
-
 import pytest
-from dotenv import load_dotenv
-
+import requests
+from unittest.mock import MagicMock, patch
 from src.external_api import get_amount_in_rub
 
 
@@ -28,13 +26,6 @@ def test_get_amount_in_rub(mock_get, transaction, expected):
 
     assert get_amount_in_rub(transaction) == expected
 
-
-from unittest.mock import MagicMock, patch
-
-import pytest
-import requests
-
-from src.external_api import get_amount_in_rub
 
 # Тестовый API ключ
 TEST_API_KEY = "test_api_key_123"
