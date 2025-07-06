@@ -14,7 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def load_transactions(file_path: str = "operations.json") -> List[Dict]:
+def load_transactions_json(file_path: str = "operations.json") -> List[Dict]:
     """
     Загружает список транзакций из JSON-файла и возвращает список словарей
     с транзакциями или пустой список в случае ошибок
@@ -43,4 +43,4 @@ def load_transactions(file_path: str = "operations.json") -> List[Dict]:
 
 
 if __name__ == "__main__":
-    load_transactions()
+    load_transactions_json()
