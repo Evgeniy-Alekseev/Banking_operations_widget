@@ -1,15 +1,8 @@
-from typing import List, Dict
-
-from src.external_api import get_amount_in_rub
-
-from src.generators import transaction_descriptions
+from typing import Dict, List, Any
 
 from src.processing import filter_by_state, sort_by_date
-
-from src.services import process_bank_search,process_bank_operations
-
+from src.services import process_bank_operations, process_bank_search
 from src.utils import load_transactions_json
-
 from src.utils_2 import load_transactions_csv, load_transactions_excel
 
 
@@ -41,35 +34,35 @@ def print_transaction(transaction: Dict) -> None:
         print("Ошибка: неверный формат транзакции")
         return
 
-    date = transaction.get('date', 'Нет даты')
-    description = transaction.get('description', 'Нет описания')
+    date = transaction.get("date", "Нет даты")
+    description = transaction.get("description", "Нет описания")
     print(f"{date} {description}")
 
-    if 'from' in transaction:
+    if "from" in transaction:
         print(f"{transaction['from']}", end="")
-        if 'to' in transaction:
+        if "to" in transaction:
             print(f" -> {transaction['to']}")
         else:
             print()
-    elif 'to' in transaction:
+    elif "to" in transaction:
         print(f"{transaction['to']}")
 
-    amount = transaction.get('amount', '')
-    currency = transaction.get('currency', '')
-    if currency and currency.upper() == 'RUB':
+    amount = transaction.get("amount", "")
+    currency = transaction.get("currency", "")
+    if currency and currency.upper() == "RUB":
         print(f"Сумма: {amount} руб.\n")
     else:
         print(f"Сумма: {amount} {currency}\n")
 
 
 def main() -> None:
+    """
+    Объединяет функционал модулей для работы с трансакциями
+    """
     print("Привет! Добро пожаловать в программу работы с банковскими транзакциями.")
 
     # Выбор типа файла
-    file_type = get_user_choice(
-        "Выберите необходимый пункт меню:",
-        ["JSON-файл", "CSV-файл", "XLSX-файл"]
-    )
+    file_type = get_user_choice("Выберите необходимый пункт меню:", ["JSON-файл", "CSV-файл", "XLSX-файл"])
 
     print(f"\nДля обработки выбран {file_type}.")
 
@@ -94,11 +87,15 @@ def main() -> None:
     # Фильтрация по статусу
     valid_statuses = ["EXECUTED", "CANCELED", "PENDING"]
     while True:
-        status = input(
-            "\nВведите статус, по которому необходимо выполнить фильтрацию.\n"
-            f"Доступные для фильтрации статусы: {', '.join(valid_statuses)}\n"
-            "Ваш выбор: "
-        ).strip().upper()
+        status = (
+            input(
+                "\nВведите статус, по которому необходимо выполнить фильтрацию.\n"
+                f"Доступные для фильтрации статусы: {', '.join(valid_statuses)}\n"
+                "Ваш выбор: "
+            )
+            .strip()
+            .upper()
+        )
 
         if status in valid_statuses:
             break
@@ -108,35 +105,28 @@ def main() -> None:
     print(f'\nОперации отфильтрованы по статусу "{status}"')
 
     # Сортировка по дате
-    sort_choice = get_user_input(
-        "\nОтсортировать операции по дате? (Да/Нет): ",
-        ["Да", "Нет"]
-    ).lower()
+    sort_choice = get_user_input("\nОтсортировать операции по дате? (Да/Нет): ", ["Да", "Нет"]).lower()
 
-    if sort_choice == 'да':
+    if sort_choice == "да":
         sort_order = get_user_input(
             "Отсортировать по возрастанию или по убыванию? (по возрастанию/по убыванию): ",
-            ["по возрастанию", "по убыванию"]
+            ["по возрастанию", "по убыванию"],
         )
-        reverse = sort_order == 'по убыванию'
+        reverse = sort_order == "по убыванию"
         filtered = sort_by_date(filtered, reverse)
 
     # Фильтрация рублевых транзакций
-    rub_only = get_user_input(
-        "\nВыводить только рублевые транзакции? (Да/Нет): ",
-        ["Да", "Нет"]
-    ).lower()
+    rub_only = get_user_input("\nВыводить только рублевые транзакции? (Да/Нет): ", ["Да", "Нет"]).lower()
 
-    if rub_only == 'да':
+    if rub_only == "да":
         filtered = process_bank_operations(filtered, ["RUB"])
 
     # Поиск по описанию
     search_choice = get_user_input(
-        "\nОтфильтровать список транзакций по определенному слову в описании? (Да/Нет): ",
-        ["Да", "Нет"]
+        "\nОтфильтровать список транзакций по определенному слову в описании? (Да/Нет): ", ["Да", "Нет"]
     ).lower()
 
-    if search_choice == 'да':
+    if search_choice == "да":
         search_word = input("Введите слово для поиска в описании: ").strip()
         filtered = process_bank_search(filtered, search_word)
 

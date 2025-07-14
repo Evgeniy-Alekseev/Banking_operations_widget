@@ -1,5 +1,4 @@
 import re
-
 from collections import Counter
 
 
@@ -13,7 +12,7 @@ def process_bank_search(data: list[dict], search: str) -> list[dict]:
     search: Строка для поиска в описании.
     """
     if not search:
-        return []  #  Возвращает пустой список при пустом поиске
+        return []  # Возвращает пустой список при пустом поиске
 
     pattern = re.compile(re.escape(search), re.IGNORECASE)  # Без учета регистра
     filtered_data = []
@@ -29,7 +28,8 @@ def process_bank_search(data: list[dict], search: str) -> list[dict]:
 def process_bank_operations(data: list[dict], categories: list[str]) -> dict[str, int]:
     """
     Подсчитывает количество операций для каждой категории из списка.
-    Принимает список словарей с данными о банковских операциях и список категорий операций (должен содержать ключ "description").
+    Принимает список словарей с данными о банковских операциях и список категорий операций
+    (должен содержать ключ "description").
     Возвращает словарь, где ключи — категории, а значения — количество операций.
     Если категория не встречается, её значение будет 0.
     """

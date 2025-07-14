@@ -1,8 +1,5 @@
-import pytest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 from main import print_transaction, get_user_choice, get_user_input, main
-from typing import List, Dict
-import json
 
 # Тестовые данные
 SAMPLE_TRANSACTION = {
