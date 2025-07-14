@@ -334,3 +334,33 @@ def mock_response():
     mock.json.return_value = {"rates": {"RUB": 75.50}}
     mock.raise_for_status.return_value = None
     return mock
+
+
+# фикстуры для process_bank_search
+
+
+@pytest.fixture
+def sample_transactions():
+    return [
+        {"id": 1, "amount": 100, "description": "Payment for groceries"},
+        {"id": 2, "amount": 200, "description": "Salary"},
+        {"id": 3, "amount": 50, "description": "Cafe payment"},
+        {"id": 4, "amount": 300, "description": "Monthly rent"},
+        {"id": 5, "amount": 150, "description": "Tax (2023)"},
+        {"id": 6, "amount": 75, "description": ""},  # Пустое описание
+        {"id": 7, "amount": 90},  # Нет ключа 'description'
+    ]
+
+
+# фикстуры для process_bank_operations
+
+
+@pytest.fixture
+def sample_transactions():
+    return [
+        {"id": 1, "description": "Salary ACME Corp"},
+        {"id": 2, "description": "Grocery Store"},
+        {"id": 3, "description": "Tax payment 2023"},
+        {"id": 4, "description": "Bonus"},
+        {"id": 5, "description": "Monthly salary"},
+    ]

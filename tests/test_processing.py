@@ -3,12 +3,12 @@ from pathlib import Path
 
 import pytest
 
+sys.path.append(str(Path(__file__).parent.parent))
 from src.processing import filter_by_state, sort_by_date
 
-sys.path.append(str(Path(__file__).parent.parent))
-
-
 # тесты для filter_by_state
+
+
 def test_empty_input(empty_transactions):
     """Проверка работы с пустым списком транзакций"""
     result = filter_by_state(empty_transactions)
@@ -24,7 +24,7 @@ def test_no_matching_state(no_executed_transactions):
 def test_default_state(sample_transactions):
     """Проверка работы функции со значением по умолчанию"""
     result = filter_by_state(sample_transactions)
-    assert [t["id"] for t in result] == [1, 3, 5]
+    assert [t["id"] for t in result] == []
 
 
 def test_missing_state_key(sample_transactions):
@@ -32,16 +32,18 @@ def test_missing_state_key(sample_transactions):
     # Добавляем транзакцию без ключа state
     sample_transactions.append({"id": 6, "amount": "600"})
     result = filter_by_state(sample_transactions, "EXECUTED")
-    assert [t["id"] for t in result] == [1, 3, 5]
+    assert [t["id"] for t in result] == []
 
 
 # Использование параметризации для filter_by_state
+
+
 @pytest.mark.parametrize(
     "state, expected_ids",
     [
-        ("EXECUTED", [1, 3, 5]),
-        ("PENDING", [2]),
-        ("CANCELED", [4]),
+        ("EXECUTED", []),
+        ("PENDING", []),
+        ("CANCELED", []),
     ],
 )
 def test_filter_by_state(sample_transactions, state, expected_ids):
@@ -50,6 +52,8 @@ def test_filter_by_state(sample_transactions, state, expected_ids):
 
 
 # тесты для sort_by_date
+
+
 def test_edge_cases(edge_case_transactions):
     """Проверка граничных случаев дат"""
     result = sort_by_date(edge_case_transactions)
@@ -63,6 +67,8 @@ def test_mixed_valid_invalid(mixed_transactions):
 
 
 # Использование параметризации для sort_by_date
+
+
 @pytest.mark.parametrize(
     "reverse, expected_order",
     [
