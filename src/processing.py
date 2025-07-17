@@ -6,7 +6,7 @@ def filter_by_state(transactions: list[dict], state: str = "EXECUTED") -> list[d
     Фильтрует список словарей по значению ключа 'state' (по умолчанию 'EXECUTED').
     Возвращает отфильтрованный список словарей.
     """
-    return [transaction for transaction in transactions if transaction.get("state", None) == state]
+    return [transaction for transaction in transactions if transaction.get("state", None) == state.upper()]
 
 
 if __name__ == "__main__":
